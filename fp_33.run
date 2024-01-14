@@ -1,0 +1,49 @@
+reset;
+
+model fp_33.mod;
+data fpn_33.dat;
+data fp_33.dat;
+
+
+option solver knitro;
+
+solve COST ;
+
+printf "\nn\t\V1\t\tV2\t\tV3\n";
+for {n in N} {
+    printf "%d\t%10.6f\t(%0.2f)\t%0.6f\t(%0.2f)\t%10.6f\t(%0.2f)\n", n,
+            sqrt( Vre[n,1]^2 + Vim[n,1]^2 ) / vb,
+            180/pi * atan( Vim[n,1] / Vre[n,1] ),
+            sqrt( Vre[n,2]^2 + Vim[n,2]^2 ) / vb,
+            -180 + 180/pi * atan( Vim[n,2] / Vre[n,2] ),
+            sqrt( Vre[n,3]^2 + Vim[n,3]^2 ) / vb,
+            180 + 180/pi * atan( Vim[n,3] / Vre[n,3] );
+};
+
+printf ";\n\n";
+
+printf "\nm\tn\tI1\t\tI2\t\tI3\n";
+for {(m,n) in L} {
+    printf "%d\t%d\t%0.2f \t%0.2f\t%0.2f \t%0.2f\t%0.2f \t%0.2f\n", m, n,
+            sqrt( Ire[m,n,1]^2 + Iim[m,n,1]^2 ),
+            180/pi * atan( Iim[m,n,1] / (Ire[m,n,1]+1e-05)),
+            sqrt( Ire[m,n,2]^2 + Iim[m,n,2]^2 ),
+            -180 + 180/pi * atan( Iim[m,n,2] / (Ire[m,n,2]+1e-05)),
+            sqrt( Ire[m,n,3]^2 + Iim[m,n,3]^2 ),
+            180 + 180/pi * atan( Iim[m,n,3] / (Ire[m,n,3]+1e-05));
+}
+
+
+printf "\nn\tPgn\tQgn";
+for{n in G}
+    printf "\n%d\t%0.2f\t%0.2f", n, Pg[n], Qg[n];
+	
+
+printf "\nSubstationPower\t%0.2f\n",PSE;
+printf "\nCOST\t%0.2f\n",COST;
+
+
+
+#display R;
+#display X;
+#display Bshunt;
